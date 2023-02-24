@@ -52,8 +52,12 @@ def find_best_lines(lines_src, lines_dest):
         # Got a hit!
         matches[idx] = best
         print("best match @ {} : {} = '{}' [{}%] @ {} ".format(idx, src, best[2], best[0], best[1]))
+    return matches
 
 txt_src = load_text(args.src)
 txt_dest = load_text(args.dest)
 
-find_best_lines(txt_src, txt_dest)
+full_ratio = fuzz.ratio('\n'.join(txt_src), '\n'.join(txt_dest))
+
+print("fulltext similarity = {}".format(full_ratio))
+matches = find_best_lines(txt_src, txt_dest)
