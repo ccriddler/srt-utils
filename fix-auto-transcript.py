@@ -17,6 +17,7 @@ of the dest file.
 parser = argparse.ArgumentParser(description="downloads metadata + script files from HVDB")
 parser.add_argument("src", help="source of 'good' text, to be substitute into dest")
 parser.add_argument("dest", help="source of 'bad' text, whose line count must be unmodified")
+parser.add_argument("--write", action="store_true", help="write out modified dest lines")
 args = parser.parse_args()
 
 frag_delim="、|？|　|\?"
@@ -26,6 +27,11 @@ RATIO_OK=80
 def load_text(path):
     with open(path, "r") as f:
         data = f.readlines()
+    return data
+
+def write_text(path, lines):
+    with open(path, "w") as f:
+        data = f.write(''.join(lines))
     return data
 
 def clean_line(line):
@@ -82,6 +88,9 @@ full_ratio = fuzz.ratio('\n'.join(txt_src), '\n'.join(txt_dest))
 full_ratio_t = fuzz.partial_token_set_ratio('\n'.join(txt_src), '\n'.join(txt_dest))
 print("full-line replace similarity = {}".format(full_ratio))
 print("full-line replace similarity [token] = {}".format(full_ratio_t))
+
+if(args.write):
+    write_text(args.dest + ".fixed", txt_dest)
 
 # TODO partial line replacements
 # multiple lines, when joined together, create a high ratio based on search text
