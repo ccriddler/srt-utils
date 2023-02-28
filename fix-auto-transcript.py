@@ -48,13 +48,13 @@ def find_best_lines(lines_src, lines_dest):
     matches = {}
     last_match = 0
     for idx, src in enumerate(lines_src):
-        best = find_best_line(clean_line(src), lines_dest[last_match:])
+        best = find_best_line(clean_line(src), lines_dest)
 
         if(best["best_ratio"] < RATIO_OK):
             continue
 
         best["src_text"] = src
-        best["best_ratio_idx"] += last_match
+        #best["best_ratio_idx"] += last_match
 
         # Got a hit!
         matches[idx] = best
@@ -79,7 +79,9 @@ matches = find_best_lines(txt_src, txt_dest)
 
 txt_dest = apply_matches(matches, txt_dest)
 full_ratio = fuzz.ratio('\n'.join(txt_src), '\n'.join(txt_dest))
+full_ratio_t = fuzz.partial_token_set_ratio('\n'.join(txt_src), '\n'.join(txt_dest))
 print("full-line replace similarity = {}".format(full_ratio))
+print("full-line replace similarity [token] = {}".format(full_ratio_t))
 
 # TODO partial line replacements
 # multiple lines, when joined together, create a high ratio based on search text
